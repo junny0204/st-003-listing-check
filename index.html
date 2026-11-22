@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sintron ST-003 Listing - Amazon上傳前檢查表</title>
+<style>
+:root{
+  --ink:#1F1F1F; --body:#3D3D3D; --muted:#8A8A8A; --paper:#F4F3F0;
+  --gold:#C9962E; --chip:#D8D6D0; --line:#E3E1DC;
+  --amz:#007185; --amzPrice:#B12704; --warn:#B4530A;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:#fff;color:var(--body);
+  font-family:"Segoe UI","Noto Sans TC","Microsoft JhengHei",Arial,sans-serif;
+  font-size:15px;line-height:1.5}
+img{max-width:100%;display:block}
+
+/* ---------- 版本切換列 ---------- */
+.bar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line);
+  box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.barIn{max-width:1240px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font-weight:700;color:var(--ink);font-size:14px;letter-spacing:.3px;white-space:nowrap}
+.brand span{color:var(--gold)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{border:1px solid var(--chip);background:#fff;color:var(--body);border-radius:999px;
+  padding:7px 16px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;
+  font-family:inherit;transition:all .12s}
+.tab:hover{border-color:var(--gold)}
+.tab.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.asin{margin-left:auto;font-size:12.5px;color:var(--muted);white-space:nowrap}
+.asin b{color:var(--ink);font-family:Consolas,monospace;letter-spacing:.4px}
+.jump{display:flex;gap:5px;flex-wrap:wrap;font-size:12px}
+.jump a{color:var(--amz);text-decoration:none;border:1px solid var(--line);border-radius:5px;padding:3px 7px}
+.jump a:hover{background:var(--paper)}
+
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px 90px}
+
+/* ---------- 區塊標頭 ---------- */
+.sec{margin-top:38px;border-top:1px solid var(--line);padding-top:26px}
+.secH{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.secN{background:var(--ink);color:#fff;font-size:12px;font-weight:700;letter-spacing:1px;
+  padding:4px 10px;border-radius:4px;white-space:nowrap}
+.secT{font-size:19px;font-weight:700;color:var(--ink)}
+
+/* ---------- Amazon 上半部 ---------- */
+.top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:36px;padding-top:26px}
+@media(max-width:900px){.top{grid-template-columns:1fr}}
+.galWrap{display:flex;gap:12px}
+.thumbs{display:flex;flex-direction:column;gap:8px;flex:0 0 62px}
+.thumbs img{width:62px;height:62px;object-fit:cover;border:1px solid var(--line);border-radius:5px;cursor:pointer;background:#fff}
+.thumbs img.on{border:2px solid var(--amz);box-shadow:0 0 0 2px #cfe8ee}
+.zoomHost{position:relative;flex:1;min-width:0;align-self:flex-start}
+.main{border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff;cursor:crosshair}
+.lens{position:absolute;display:none;z-index:20;pointer-events:none;
+  background:rgba(255,255,255,.32);border:1px solid rgba(0,0,0,.28);box-shadow:0 0 0 9999px rgba(0,0,0,.02)}
+.zoomPane{position:absolute;display:none;z-index:60;top:0;left:calc(100% + 26px);
+  width:560px;height:560px;border:1px solid var(--line);border-radius:4px;background-color:#fff;
+  background-repeat:no-repeat;box-shadow:0 10px 34px rgba(0,0,0,.22)}
+.main img{width:100%;aspect-ratio:1/1;object-fit:contain;background:#fff}
+
+h1.title{font-size:23px;line-height:1.35;font-weight:400;color:var(--ink);margin-bottom:8px}
+.byline{font-size:13.5px;color:var(--amz);margin-bottom:10px}
+.price{font-size:26px;color:var(--amzPrice);font-weight:400;margin:12px 0 4px}
+.abt{font-size:15px;font-weight:700;color:var(--ink);margin:18px 0 8px}
+ul.bul{list-style:disc;padding-left:20px}
+ul.bul li{margin-bottom:9px;font-size:14px;line-height:1.55}
+.cnt{font-size:11.5px;color:var(--muted);margin-left:6px;font-family:Consolas,monospace}
+
+/* ---------- A+ ---------- */
+.aplus{background:var(--paper);border-radius:8px;padding:18px;margin-top:6px}
+.apRow{display:flex;flex-direction:column;gap:14px}
+.apItem{position:relative;background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.apItem img{width:100%}
+.apTag{position:absolute;left:10px;top:10px;background:rgba(31,31,31,.86);color:#fff;
+  font-size:11px;font-weight:700;letter-spacing:.6px;padding:4px 9px;border-radius:4px}
+.apMeta{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* ---------- 輪播（格1／格3／格4）---------- */
+.car{position:relative;background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;
+  scrollbar-width:none;-ms-overflow-style:none;outline:none}
+.track::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;scroll-snap-align:center;min-width:0}
+.car.fixed .slide{aspect-ratio:var(--ar);display:flex;align-items:center;justify-content:center;background:#fff}
+.car.fixed .slide img{max-width:100%;max-height:100%;width:auto;height:auto}
+.slide img{width:100%;display:block}
+.carBtn{position:absolute;top:50%;transform:translateY(-50%);z-index:3;
+  width:46px;height:46px;border-radius:50%;border:1px solid var(--chip);
+  background:rgba(255,255,255,.95);color:var(--ink);font-size:24px;line-height:1;cursor:pointer;
+  box-shadow:0 2px 12px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;
+  font-family:inherit;padding-bottom:3px;transition:opacity .15s,background .15s}
+.carBtn:hover{background:#fff}
+.carBtn.prev{left:14px}
+.carBtn.next{right:14px}
+.carBtn[disabled]{opacity:.25;cursor:default;box-shadow:none}
+.carFoot{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:12px}
+.dots{display:flex;gap:7px;align-items:center}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--chip);border:0;padding:0;cursor:pointer;transition:all .15s}
+.dot:hover{background:var(--gold)}
+.dot.on{background:var(--ink);width:11px;height:11px}
+
+/* ---------- 文字模組 ---------- */
+.txtMod{background:#fff;border:1px solid var(--line);border-radius:8px;padding:26px 30px}
+.txtMod h3{font-size:16px;font-weight:700;color:var(--ink);margin:22px 0 10px;letter-spacing:.3px}
+.txtMod h3:first-child{margin-top:0}
+.txtMod p{font-size:14px;line-height:1.65;margin-bottom:12px;max-width:78ch}
+.txtMod ul{list-style:disc;padding-left:20px;margin-bottom:12px}
+.txtMod li{font-size:14px;line-height:1.6;margin-bottom:9px;max-width:76ch}
+.qa{border-top:1px solid var(--line);padding:16px 0}
+.qa:first-of-type{border-top:0;padding-top:0}
+.qaQ{font-size:14.5px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.qaA{font-size:14px;line-height:1.6;max-width:78ch}
+
+/* ---------- 比較表 ---------- */
+.tblWrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+table.cmp{border-collapse:collapse;width:100%;min-width:900px;font-size:13.5px}
+table.cmp th,table.cmp td{border-bottom:1px solid var(--line);padding:11px 14px;text-align:center}
+table.cmp th:first-child,table.cmp td:first-child{text-align:left;font-weight:600;color:var(--ink);
+  background:var(--paper);position:sticky;left:0;min-width:190px}
+table.cmp thead th{background:var(--ink);color:#fff;font-size:13.5px;font-weight:700}
+table.cmp thead th:first-child{background:var(--ink);color:#fff}
+table.cmp td.hit{background:#FCF7EC}
+table.cmp thead th.hit{background:var(--gold);color:var(--ink)}
+.yes{color:#1E7A3C;font-weight:700}
+.no{color:#B02B2B;font-weight:700}
+.foot{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="barIn">
+  <div class="brand">Sintron <span>ST-003</span> Listing - Amazon上傳前檢查表</div>
+  <div class="tabs">
+    <button class="tab on" data-v="a">10-30R</button>
+    <button class="tab" data-v="b">14-30R Standard</button>
+    <button class="tab" data-v="c">14-30R Reverse</button>
+  </div>
+  <div class="jump">
+    <a href="#gal">主圖</a><a href="#g1">A+格1</a><a href="#g2">A+格2</a><a href="#g3">A+格3</a>
+    <a href="#g4">A+格4</a><a href="#g5">A+格5</a><a href="#g6">A+格6</a><a href="#g7">A+格7</a>
+  </div>
+</div></div>
+
+<div class="wrap">
+
+<!-- ================= 上半部 ================= -->
+<div class="top" id="gal">
+  <div>
+    <div class="galWrap">
+      <div class="thumbs" id="thumbs"></div>
+      <div class="zoomHost" id="zoomHost">
+        <div class="main"><img id="mainImg" alt="主圖"></div>
+        <div class="lens" id="lens"></div>
+        <div class="zoomPane" id="zoomPane"></div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <h1 class="title" id="title"></h1>
+    <div class="byline">Visit the Sintron Store</div>
+  </div>
+</div>
+
+<!-- ================= 格1 ================= -->
+<div class="sec" id="g1">
+  <div class="secH"><span class="secN">A+格1</span><span class="secT">Premium Simple Image Carousel</span></div>
+  <div class="aplus"><div id="ap1"></div></div>
+</div>
+
+<!-- ================= 格2 ================= -->
+<div class="sec" id="g2">
+  <div class="secH"><span class="secN">A+格2</span><span class="secT">Premium Text</span></div>
+  <div class="txtMod" id="ap2"></div>
+</div>
+
+<!-- ================= 格3 ================= -->
+<div class="sec" id="g3">
+  <div class="secH"><span class="secN">A+格3</span><span class="secT">Premium Simple Image Carousel</span></div>
+  <div class="aplus"><div id="ap3"></div></div>
+</div>
+
+<!-- ================= 格4 ================= -->
+<div class="sec" id="g4">
+  <div class="secH"><span class="secN">A+格4</span><span class="secT">Premium Simple Image Carousel</span></div>
+  <div class="aplus"><div id="ap4"></div></div>
+</div>
+
+<!-- ================= 格5 ================= -->
+<div class="sec" id="g5">
+  <div class="secH"><span class="secN">A+格5</span><span class="secT">Premium Full Image — What's in the box</span></div>
+  <div class="aplus"><div id="ap5"></div></div>
+</div>
+
+<!-- ================= 格6 ================= -->
+<div class="sec" id="g6">
+  <div class="secH"><span class="secN">A+格6</span><span class="secT">Premium Q&amp;A</span></div>
+  <div class="txtMod" id="ap6"></div>
+</div>
+
+<!-- ================= 格7 ================= -->
+<div class="sec" id="g7">
+  <div class="secH"><span class="secN">A+格7</span><span class="secT">Comparison Table</span></div>
+  <div class="tblWrap">
+  <table class="cmp">
+    <thead><tr><th></th><th>ST-002</th><th class="hit">ST-003</th><th>ST-004</th><th>ST-005</th><th>ST-004-F</th></tr></thead>
+    <tbody>
+      <tr><td>Operating Voltage</td><td>110V~120V</td><td class="hit">220V/240V</td><td>110V~120V</td><td>220V/240V</td><td>110V~120V</td></tr>
+      <tr><td>Current Rating</td><td>Max 16 Amp</td><td class="hit">Max 30 Amp</td><td>Max 16 Amp</td><td>Max 30 Amp</td><td>Max 16 Amp</td></tr>
+      <tr><td>Plug Type</td><td>Household (US/UK/EU)</td><td class="hit">Dryer (NEMA 10-30/14-30)</td><td>Household (US/UK/EU)</td><td>Dryer (NEMA 10-30/14-30)</td><td>Household (US/UK/EU)</td></tr>
+      <tr><td>Mobile Payment</td><td class="no">✘</td><td class="hit no">✘</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td></tr>
+      <tr><td>Bluetooth App Pay (ScanPay)</td><td class="no">✘</td><td class="hit no">✘</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td></tr>
+      <tr><td>Off Hours Scheduling</td><td class="no">✘</td><td class="hit no">✘</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td></tr>
+      <tr><td>Coin Types Supported</td><td>Up to 8</td><td class="hit">Up to 8</td><td>Up to 8</td><td>Up to 8</td><td>Up to 8</td></tr>
+      <tr><td>Offline Coin Operation</td><td class="yes">✔</td><td class="hit yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td></tr>
+      <tr><td>Payment Gateway Support</td><td>None</td><td class="hit">None</td><td>PayPal, Stripe, Square &amp; more</td><td>PayPal, Stripe, Square &amp; more</td><td>PayPal, Stripe, Square &amp; more</td></tr>
+      <tr><td>Customizable LCD Text</td><td class="no">✘</td><td class="hit no">✘</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td></tr>
+      <tr><td>OTA Firmware Update</td><td class="no">✘</td><td class="hit no">✘</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td></tr>
+      <tr><td>USPTO Design Patent</td><td class="yes">✔</td><td class="hit yes">✔</td><td class="yes">✔</td><td class="yes">✔</td><td class="yes">✔</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+</div>
+
+<script>
+/* ============ 三個版本的資料 ============ */
+const V = {
+ a:{ dir:"10-30R",          title:"Sintron ST-003 Coin-Operated Timer Controller · NEMA 10-30R" },
+ b:{ dir:"14-30R-Standard", title:"Sintron ST-003 Coin-Operated Timer Controller · NEMA 14-30R Standard" },
+ c:{ dir:"14-30R-Reverse",  title:"Sintron ST-003 Coin-Operated Timer Controller · NEMA 14-30R Reverse" }
+};
+
+const GAL = ["1.jpg","2.jpg","3.jpg","4.jpg","5.jpg","6.jpg","7.jpg","8.jpg","9.jpg"];
+const AP1 = ["g1-1.jpg","g1-2.jpg","g1-3.jpg","g1-4.jpg"];
+const AP3 = ["g3-1.jpg","g3-2.jpg","g3-3.jpg","g3-4.jpg","g3-5.jpg","g3-6.jpg"];
+const AP4 = ["g4-1.jpg","g4-2.jpg"];
+const AP5 = ["g5.jpg"];
+
+/* ============ 格2 Premium Text ============ */
+const P2 = {
+ lead: "NOTICE: Before you purchase — The ST-003 takes coins only. For coins plus mobile payment on a 30A dryer circuit, choose the ST-005.",
+ plug: {
+  a: "Check the plug on your dryer's cord and count the prongs before you order. This listing is the 3-prong version, NEMA 10-30P; the ST-003 also comes as a 4-prong NEMA 14-30P, in Standard or Reverse.",
+  b: "Check the plug on your dryer's cord and count the prongs before you order. This listing is the 4-prong Standard version, NEMA 14-30P; the ST-003 also comes as a 4-prong Reverse and a 3-prong NEMA 10-30P.",
+  c: "Check the plug on your dryer's cord and count the prongs before you order. This listing is the 4-prong Reverse version, NEMA 14-30P; the ST-003 also comes as a 4-prong Standard and a 3-prong NEMA 10-30P."
+ },
+ volt: "The ST-003 is built for 220V–240V circuits rated up to 30A. For household 110V–120V outlets up to 16A, please use the ST-002 instead. Gas dryers run from a standard 110V outlet, so they take the ST-002, not this box.",
+ about: "The Sintron ST-003 is a timer box that controls how long a machine is allowed to run. You set the coin amount and the run time, up to 99:59, and the user pays before the machine will start. It takes up to 8 coin types through the Sintron ST-001 acceptor, with standard US and Canadian coins set before it ships, and it keeps two totals of what it has taken in: one you can reset for a daily or weekly check, and an all-time total. The ST-003 suits electric dryers in apartment laundry rooms, motels, campus housing, rental units, condos and RV parks.",
+ real: "Please make sure you are getting the GENUINE Sintron ST-003. There are no-brand copies on the market that do not meet the same safety requirements and are rated well below 30A. An easy check: ask whether theirs uses solid-state relays."
+};
+function text2(v){
+ const items = [P2.lead, P2.plug[v], P2.volt, P2.about, P2.real];
+ return "<ul>" + items.map(t => `<li>${t}</li>`).join("") + "</ul>";
+}
+
+/* ============ 格6 Q&A ============ */
+const QA_BASE = [
+ ["Which version do I need — 3-prong or 4-prong?",
+  "Look at the plug on your dryer's power cord and count the prongs. Three prongs is NEMA 10-30P; four prongs is NEMA 14-30P, which comes in Standard or Reverse. Order the ST-003 version that matches the plug you have."],
+ ["Do I need an electrician for the installation, or can I do it on my own?",
+  "No rewiring is involved — the box goes between the wall outlet and the dryer, so most owners set it up themselves. Keep the box off the dryer, in a well-ventilated spot away from heat. Step-by-step instructions and video tutorials are provided."],
+ ["Does the ST-003 take mobile payment?",
+  "The ST-003 takes coins only. For coins plus scan-to-pay mobile payment on a 30A dryer circuit, choose the Sintron ST-005."],
+ ["Which coins does the ST-003 accept?",
+  "Standard US and Canadian coins — quarters, loonies and toonies — are set before it ships. The Sintron ST-001 reads up to 8 coin types, tokens included, and you set what each one is worth."],
+ ["Can I check how much the ST-003 has collected?",
+  "Yes. Press COUNTER on the timer board inside the box. The first press shows the total since your last reset, and the second press shows the all-time total, which can't be reset."]
+];
+
+/* ============ 繪製 ============ */
+let cur = "a";
+const $ = s => document.querySelector(s);
+
+/* 真的可以滑的輪播：左右鍵、圓點、滑鼠拖曳／觸控滑動、鍵盤方向鍵 */
+function carousel(mountId, dir, files, prefix){
+ const el = document.getElementById(mountId);
+ el.innerHTML =
+  `<div class="car">`+
+   `<button class="carBtn prev" type="button" aria-label="上一張">&lsaquo;</button>`+
+   `<div class="track" tabindex="0">`+
+     files.map((f,i)=>`<div class="slide"><img src="${dir}/aplus/${f}" alt="${prefix}-${i+1}" loading="lazy"></div>`).join("")+
+   `</div>`+
+   `<button class="carBtn next" type="button" aria-label="下一張">&rsaquo;</button>`+
+  `</div>`+
+  `<div class="carFoot"><div class="dots">`+
+   files.map((_,i)=>`<button class="dot" type="button" data-i="${i}" aria-label="第 ${i+1} 張"></button>`).join("")+
+   `</div></div>`;
+
+ const track = el.querySelector(".track");
+ const dots  = Array.from(el.querySelectorAll(".dot"));
+ const prev  = el.querySelector(".prev"), next = el.querySelector(".next");
+ const at = () => Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+ const go = i => track.scrollTo({ left: i * track.clientWidth, behavior: "smooth" });
+
+ function sync(){
+  const i = Math.min(files.length-1, Math.max(0, at()));
+  dots.forEach((d,j)=>d.classList.toggle("on", j===i));
+  prev.disabled = i <= 0;
+  next.disabled = i >= files.length-1;
+ }
+ prev.onclick = () => go(Math.max(0, at()-1));
+ next.onclick = () => go(Math.min(files.length-1, at()+1));
+ dots.forEach(d => d.onclick = () => go(+d.dataset.i));
+ track.addEventListener("scroll", () => { clearTimeout(track._t); track._t = setTimeout(sync, 70); });
+ track.addEventListener("keydown", e => {
+   if(e.key === "ArrowRight"){ e.preventDefault(); next.click(); }
+   if(e.key === "ArrowLeft"){  e.preventDefault(); prev.click(); }
+ });
+ window.addEventListener("resize", sync);
+
+ /* 用第一張的實際比例把整個輪播的高度鎖住，翻頁時版面不會跳 */
+ const car = el.querySelector(".car");
+ const first = el.querySelector(".slide img");
+ first.loading = "eager";
+ const lockAR = () => {
+   if(first.naturalWidth && first.naturalHeight){
+     car.style.setProperty("--ar", (first.naturalWidth / first.naturalHeight).toFixed(4));
+     car.classList.add("fixed");
+   }
+   sync();
+ };
+ if(first.complete) lockAR(); else first.addEventListener("load", lockAR, { once:true });
+
+ sync();
+}
+
+function render(v){
+ cur = v;
+ const d = V[v];
+ document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on", b.dataset.v===v));
+ $("#title").textContent = d.title;
+
+ /* 主圖組 */
+ $("#thumbs").innerHTML = GAL.map((f,i)=>
+   `<img src="${d.dir}/gallery/${f}" data-i="${i}" class="${i===0?'on':''}" alt="thumb ${i+1}" loading="lazy">`).join("");
+ setMain(0);
+ $("#thumbs").onclick = e => { if(e.target.dataset.i) setMain(+e.target.dataset.i); };
+
+ /* A+ */
+ carousel("ap1", d.dir, AP1, "格1");
+ $("#ap2").innerHTML = text2(v);
+ carousel("ap3", d.dir, AP3, "格3");
+ carousel("ap4", d.dir, AP4, "格4");
+ $("#ap5").innerHTML = `<div class="apItem"><img src="${d.dir}/aplus/${AP5[0]}" alt="A+格5"></div>`;
+
+ const qa = QA_BASE.slice();
+ $("#ap6").innerHTML = qa.map((q,i)=>
+   `<div class="qa"><div class="qaQ">Q${i+1}｜${q[0]}</div><div class="qaA">${q[1]}</div></div>`).join("");
+
+}
+
+function setMain(i){
+ const d = V[cur];
+ $("#mainImg").src = d.dir + "/gallery/" + GAL[i];
+ document.querySelectorAll("#thumbs img").forEach((t,j)=>t.classList.toggle("on", j===i));
+ hideZoom();
+}
+
+/* ============ 主圖滑鼠放大（Amazon 式：鏡頭框 ＋ 右側放大面板）============ */
+const ZOOM = 2.6;
+function hideZoom(){
+ const l=$("#lens"), p=$("#zoomPane");
+ if(l) l.style.display="none";
+ if(p) p.style.display="none";
+}
+function moveZoom(e){
+ const host=$("#zoomHost"), lens=$("#lens"), pane=$("#zoomPane"), img=$("#mainImg");
+ if(window.innerWidth < 1100 || !img.naturalWidth){ hideZoom(); return; }
+ const r = img.getBoundingClientRect(), hr = host.getBoundingClientRect();
+ if(r.width < 200){ hideZoom(); return; }
+ const pw = pane.offsetWidth || 560, ph = pane.offsetHeight || 560;
+ const lw = pw / ZOOM, lh = ph / ZOOM;
+ let x = e.clientX - r.left - lw/2, y = e.clientY - r.top - lh/2;
+ x = Math.max(0, Math.min(x, r.width  - lw));
+ y = Math.max(0, Math.min(y, r.height - lh));
+ lens.style.width = lw+"px"; lens.style.height = lh+"px";
+ lens.style.left = (r.left - hr.left + x)+"px";
+ lens.style.top  = (r.top  - hr.top  + y)+"px";
+ pane.style.backgroundImage = 'url("'+img.getAttribute("src")+'")';
+ pane.style.backgroundSize = (r.width*ZOOM)+"px "+(r.height*ZOOM)+"px";
+ pane.style.backgroundPosition = (-x*ZOOM)+"px "+(-y*ZOOM)+"px";
+ lens.style.display = "block"; pane.style.display = "block";
+}
+(function initZoom(){
+ const box = document.querySelector(".main");
+ box.addEventListener("mousemove", moveZoom);
+ box.addEventListener("mouseenter", moveZoom);
+ box.addEventListener("mouseleave", hideZoom);
+ window.addEventListener("scroll", hideZoom, { passive:true });
+ window.addEventListener("resize", hideZoom);
+})();
+
+document.querySelectorAll(".tab").forEach(b=> b.onclick = ()=> render(b.dataset.v));
+render("a");
+</script>
+</body></html>
