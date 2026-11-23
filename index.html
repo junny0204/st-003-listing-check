@@ -62,6 +62,8 @@ img{max-width:100%;display:block}
 
 h1.title{font-size:23px;line-height:1.35;font-weight:400;color:var(--ink);margin-bottom:8px}
 .byline{font-size:13.5px;color:var(--amz);margin-bottom:10px}
+.hl{font-size:14px;line-height:1.5;color:var(--ink);margin:4px 0 6px}
+.hlK{display:block;font-size:11px;font-weight:700;letter-spacing:.6px;color:var(--muted);text-transform:uppercase;margin-bottom:2px}
 .price{font-size:26px;color:var(--amzPrice);font-weight:400;margin:12px 0 4px}
 .abt{font-size:15px;font-weight:700;color:var(--ink);margin:18px 0 8px}
 ul.bul{list-style:disc;padding-left:20px}
@@ -160,6 +162,9 @@ table.cmp thead th.hit{background:var(--gold);color:var(--ink)}
   <div>
     <h1 class="title" id="title"></h1>
     <div class="byline">Visit the Sintron Store</div>
+    <div class="hl"><span class="hlK">Item Highlights</span><span id="hl"></span></div>
+    <div class="abt">About this item</div>
+    <ul class="bul" id="bullets"></ul>
   </div>
 </div>
 
@@ -228,10 +233,23 @@ table.cmp thead th.hit{background:var(--gold);color:var(--ink)}
 <script>
 /* ============ 三個版本的資料 ============ */
 const V = {
- a:{ dir:"10-30R",          title:"Sintron ST-003 Coin-Operated Timer Controller · NEMA 10-30R" },
- b:{ dir:"14-30R-Standard", title:"Sintron ST-003 Coin-Operated Timer Controller · NEMA 14-30R Standard" },
- c:{ dir:"14-30R-Reverse",  title:"Sintron ST-003 Coin-Operated Timer Controller · NEMA 14-30R Reverse" }
+ a:{ dir:"10-30R", title:"Sintron ST-003 Coin Operated Timer Box, 240V Dryer, 3-Prong NEMA 10-30P",
+     hl:"For 220V–240V electric dryers up to 30A. 3-prong NEMA 10-30P cord attached. US and Canadian coins pre-set." },
+ b:{ dir:"14-30R-Standard", title:"Sintron ST-003 Coin Operated Timer Box, 240V Dryer, 4-Prong NEMA 14-30P",
+     hl:"For 220V–240V electric dryers up to 30A. 4-prong NEMA 14-30P Standard cord attached. US and Canadian coins pre-set." },
+ c:{ dir:"14-30R-Reverse", title:"Sintron ST-003 Coin Operated Timer Box, 240V Dryer, 4-Prong 14-30P Reverse",
+     hl:"For 220V–240V electric dryers up to 30A. 4-prong NEMA 14-30P Reverse cord attached. US and Canadian coins pre-set." }
 };
+
+/* About this item：三個版本相同（2026-11-23 定稿）*/
+const BUL = [
+ "🔐【SUPERIOR PERFORMANCE】The Sintron ST-003 introduces a new design tailored for US/Canada 220V–240V electric dryers, supporting up to 30A. Enhanced with dual solid-state relays and DIN fuses you can swap in seconds.",
+ "🔐【COIN PAYMENTS】The ST-003 Timer Control Power Box takes up to 8 coin types through the Sintron ST-001 coin acceptor, tokens included, and you set what each one is worth. Standard US and Canadian coins — quarters, loonies and toonies — are set before it ships. For coins plus mobile pay, choose the Sintron ST-005.",
+ "🔐【CUSTOMIZABLE RUN TIME】You have the flexibility to set how many coins it takes and how long the dryer runs, up to 99:59 in minutes:seconds or hours:minutes. The LED display shows the time left, a beep and a flashing display warn that time is almost up, and the power cuts off at 00:00.",
+ "🔐【BUILT-IN COUNTER】The ST-003 keeps count of what it has taken in. Press COUNTER on the timer board to see the total since your last reset — handy for a daily or weekly check against the coin tray — and press again for the all-time total, which can't be reset.",
+ "🔐【BUILT FOR LAUNDRY】Engineered specifically for US and Canadian electric dryers, the ST-003 Timer Control Power Box provides reliable runtime and payment management for self-service laundry facilities. It plugs in between the wall outlet and the dryer, with no rewiring. For 110V–120V outlets and gas dryers, choose the Sintron ST-002.",
+ "🔐【QUALIFIED PRODUCT】We have applied for a patent for this product. All cables used meet safety regulations to protect your safety!"
+];
 
 const GAL = ["1.jpg","2.jpg","3.jpg","4.jpg","5.jpg","6.jpg","7.jpg","8.jpg","9.jpg"];
 const AP1 = ["g1-1.jpg","g1-2.jpg","g1-3.jpg","g1-4.jpg"];
@@ -332,6 +350,9 @@ function render(v){
  const d = V[v];
  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on", b.dataset.v===v));
  $("#title").textContent = d.title;
+ $("#hl").textContent = d.hl;
+ const ul = $("#bullets"); ul.innerHTML = "";
+ BUL.forEach(t => { const li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
 
  /* 主圖組 */
  $("#thumbs").innerHTML = GAL.map((f,i)=>
